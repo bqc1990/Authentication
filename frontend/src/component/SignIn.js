@@ -1,70 +1,76 @@
-import React, { Component } from "react";
+import React, { useState, useContext } from "react";
+import { useHistory } from "react-router-dom";
 import Axios from "axios";
-export default class SignIn extends Component {
-  constructor() {
-    super();
-    this.state = {
-      username: "",
-      password: "",
-    };
-  }
+import UserContext from "../context/UserContext";
 
-  handleSubmit = (e) => {
+export default function SignIn() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const { userData, setUserData } = useContext(UserContext);
+  const history = useHistory();
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     Axios.post("http://192.168.1.96:5000/api/user/sign-in", {
-      username: this.state.username,
-      password: this.state.password,
+      username: username,
+      password: password,
     })
       .then((res) => {
-        console.log(res.data);
         //
+        console.log(res.data);
+        setUserData({
+          token: res.data.token,
+          user: res.data,
+        });
+        localStorage.setItem("auth-token", res.data.token);
+        history.push("/");
       })
       .catch((err) => {
         console.log(err);
       });
   };
-  handleChange = (e) => {
-    this.setState({
-      [e.target.name]: e.target.value,
-    });
+  const handlePassword = (e) => {
+    setPassword(e.target.value);
   };
-  render() {
-    return (
-      <div className="mt-4">
-        <form onSubmit={this.handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="email-id">Email or username</label>
-            <input
-              type="email"
-              name="username"
-              className="form-control"
-              id="email-id"
-              aria-describedby="emailHelp"
-              value={this.state.username}
-              onChange={this.handleChange}
-            />
-            <small id="emailHelp" className="form-text text-muted">
-              We'll never share your email with anyone else.
-            </small>
-          </div>
+  const handleChange = (e) => {
+    setUsername(e.target.value);
+  };
 
-          <div className="form-group">
-            <label htmlFor="password-id">Password</label>
-            <input
-              type="password"
-              name="password"
-              className="form-control"
-              id="password-id"
-              value={this.state.password}
-              onChange={this.handleChange}
-            />
-          </div>
+  return (
+    <div className="mt-4">
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="email-id">Email or username</label>
+          <input
+            type="email"
+            name="username"
+            className="form-control"
+            id="email-id"
+            aria-describedby="emailHelp"
+            value={username}
+            onChange={handleChange}
+          />
+          <small id="emailHelp" className="form-text text-muted">
+            We'll never share your email with anyone else.
+          </small>
+        </div>
 
-          <button type="submit" className="btn btn-success btn-md btn-block">
-            SIGN IN
-          </button>
-        </form>
-      </div>
-    );
-  }
+        <div className="form-group">
+          <label htmlFor="password-id">Password</label>
+          <input
+            type="password"
+            name="password"
+            className="form-control"
+            id="password-id"
+            value={password}
+            onChange={handlePassword}
+          />
+        </div>
+
+        <button type="submit" className="btn btn-success btn-md btn-block">
+          SIGN IN
+        </button>
+      </form>
+    </div>
+  );
 }
