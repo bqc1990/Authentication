@@ -1,0 +1,13 @@
+/* LoggedOption */
+.nav-sign-out {
+  display: flex;
+  flex-flow: row wrap;
+}
+.nav-sign-out img {
+  width: 1rem;
+}
+
+.nav-sign-out button {
+  padding: 0;
+  margin: 0;
+}

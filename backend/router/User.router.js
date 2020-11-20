@@ -1,32 +1,12 @@
 const Router = require("express").Router();
-const Joi = require("joi");
 const Bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../model/User.model");
 
-const validateSignUp = (data) => {
-  const schema = Joi.object({
-    username: Joi.string().min(5).required(),
-    password: Joi.string().min(6).required(),
-    repeat_password: Joi.ref("password"),
-    name: Joi.string(),
-  });
-  return schema.validate({
-    username: data.username,
-    password: data.password,
-    repeat_password: data.repeat_password,
-  });
-};
-const validateSignIn = (data) => {
-  const schema = Joi.object({
-    username: Joi.string().min(5).required(),
-    password: Joi.string().min(6).required(),
-  });
-  return schema.validate({
-    username: data.username,
-    password: data.password,
-  });
-};
+//middleware to validate sign in/up basic inputs
+const { validateSignUp, validateSignIn } = require("../middleware/validation");
+
+const auth = require("../middleware/auth");
 
 //sign up
 Router.post("/sign-up", async (req, res) => {
@@ -72,7 +52,7 @@ Router.post("/sign-in", async (req, res) => {
     //check if the user is in the database
     const user_found = await User.findOne({ username: req.body.username });
     if (!user_found) {
-      return res.status(400).json({ msg: "user not exist." });
+      return res.status(400).json({ msg: "invalidate credentials." });
     }
 
     //compare password
@@ -81,7 +61,7 @@ Router.post("/sign-in", async (req, res) => {
       user_found.password
     );
     if (!isMatch) {
-      return res.status(400).json({ msg: " username or password not match." });
+      return res.status(400).json({ msg: " invalidate credentials." });
     }
 
     //generate webtoken to the user
@@ -93,6 +73,31 @@ Router.post("/sign-in", async (req, res) => {
         name: user_found.name,
         email: user_found.username,
       },
+    });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+});
+
+//delete the login user
+Router.delete("/delete", auth, async (req, res) => {
+  const user_delete = await User.findByIdAndDelete(req.user_id);
+  res.json(user_delete);
+});
+
+//if token is validate
+Router.post("/tokenIsValidate", async (req, res) => {
+  try {
+    const token = req.header("auth-token");
+
+    if (!token) return res.json({ validate: false, user: null });
+    const token_verfied = await jwt.verify(token, process.env.JWT_SECRET);
+    if (!token_verfied) return res.json({ validate: false, user: null });
+    const user_found = await User.findById(token_verfied.id);
+    if (!user_found) return res.json({ validate: false, user: null });
+    return res.json({
+      validate: true,
+      user: { name: user_found.name, user_id: user_found._id },
     });
   } catch (err) {
     return res.status(500).json({ msg: err.message });
