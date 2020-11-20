@@ -1,4 +1,5 @@
 const Joi = require("joi");
+
 const validateSignUp = (data) => {
   const schema = Joi.object({
     username: Joi.string().min(5).required(),

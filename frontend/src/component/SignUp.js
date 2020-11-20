@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Axios from "axios";
+import Error from "./Error";
 export default class SignUp extends Component {
   constructor() {
     super();
@@ -8,6 +9,7 @@ export default class SignUp extends Component {
       password: "",
       repeat_password: "",
       name: "",
+      error_message: "",
     };
   }
   handleSubmit = (e) => {
@@ -15,14 +17,17 @@ export default class SignUp extends Component {
     Axios.post("http://192.168.1.96:5000/api/user/sign-up", {
       username: this.state.username,
       password: this.state.password,
-      repeat_password: this.repeat_password,
+      repeat_password: this.state.repeat_password,
       name: this.state.name,
     })
       .then((res) => {
-        console.log(res);
+        alert(
+          `${this.state.name}, sign up successfully. redirect to sign in page`
+        );
+        window.location = "/sign-in";
       })
       .catch((err) => {
-        console.log(err);
+        this.setState({ error_message: err.response.data.msg });
       });
   };
 
@@ -32,13 +37,25 @@ export default class SignUp extends Component {
     });
   };
 
+  handleClearError = (e) => {
+    this.setState({ error_message: "" });
+  };
+
   render() {
     return (
       <div className="mt-4">
         <form onSubmit={this.handleSubmit}>
+          {this.state.error_message ? (
+            <Error
+              error_message={this.state.error_message}
+              clearError={this.handleClearError}
+            />
+          ) : null}
+
           <div className="form-group">
             <label htmlFor="email-id">What's your email or username?</label>
             <input
+              required
               type="email"
               name="username"
               className="form-control"
@@ -65,6 +82,7 @@ export default class SignUp extends Component {
           <div className="form-group">
             <label htmlFor="password">Create a password</label>
             <input
+              required
               type="password"
               name="password"
               className="form-control"
@@ -74,12 +92,13 @@ export default class SignUp extends Component {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="repeat-password">Confirm your password</label>
+            <label htmlFor="repeat_password">Confirm your password</label>
             <input
+              required
               type="password"
               name="repeat_password"
               className="form-control"
-              id="repeat-password"
+              id="repeat_password"
               value={this.state.repeat_password}
               onChange={this.handleChange}
             />

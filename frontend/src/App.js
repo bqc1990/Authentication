@@ -8,6 +8,7 @@ import About from "./component/About";
 import SignUp from "./component/SignUp";
 import SignIn from "./component/SignIn";
 import UserContext from "./context/UserContext";
+import UserDetail from "./component/UserDetail";
 import "./App.css";
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
               <Route path="/about" component={About} />
               <Route path="/sign-in" component={SignIn} />
               <Route path="/sign-up" component={SignUp} />
+              <Route path="/user-detail" component={UserDetail} />
             </Switch>
           </div>
         </UserContext.Provider>

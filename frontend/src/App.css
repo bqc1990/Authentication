@@ -11,3 +11,23 @@
   padding: 0;
   margin: 0;
 }
+
+.error-section {
+  text-align: center;
+
+  color: #e84855;
+}
+.error-message {
+  font-weight: 500;
+
+  font-style: italic;
+}
+
+.error-button {
+  background-color: #e84855;
+  color: #fff;
+  font-size: 0.8rem;
+  border: none;
+  padding: 0 3px;
+  margin: 4px;
+}
