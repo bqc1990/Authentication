@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import Axios from "axios";
-import UserContext from "../context/UserContext";
-import Error from "./Error";
+import UserContext from "../../context/UserContext";
+import Error from "../Error";
 
 export default function SignIn() {
   const [username, setUsername] = useState("");

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Axios from "axios";
-import Error from "./Error";
+import Error from "../Error";
 export default class SignUp extends Component {
   constructor() {
     super();

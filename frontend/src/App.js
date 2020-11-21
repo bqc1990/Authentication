@@ -4,11 +4,13 @@ import Axios from "axios";
 import Navbar from "./component/layout/Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Home from "./component/layout/Home";
-import About from "./component/About";
-import SignUp from "./component/SignUp";
-import SignIn from "./component/SignIn";
+import About from "./component/page/About";
+import SignUp from "./component/page/SignUp";
+import SignIn from "./component/page/SignIn";
 import UserContext from "./context/UserContext";
-import UserDetail from "./component/UserDetail";
+import UserDetail from "./component/page/UserDetail";
+import PrivateRoute from "./component/route/PrivateRoute";
+import RestrictRoute from "./component/route/RestrictRoute";
 import "./App.css";
 
 function App() {
@@ -50,9 +52,17 @@ function App() {
             <Switch>
               <Route path="/" exact component={Home} />
               <Route path="/about" component={About} />
-              <Route path="/sign-in" component={SignIn} />
-              <Route path="/sign-up" component={SignUp} />
-              <Route path="/user-detail" component={UserDetail} />
+              <RestrictRoute
+                restricted={true}
+                path="/sign-in"
+                component={SignIn}
+              />
+              <RestrictRoute
+                restricted={true}
+                path="/sign-up"
+                component={SignUp}
+              />
+              <PrivateRoute path="/user-detail" component={UserDetail} />
             </Switch>
           </div>
         </UserContext.Provider>
